@@ -32,6 +32,8 @@
                             dark: '#0a0a0a',
                             gold: '#FFD700',
                             pink: '#ec4899',
+                            hidalgo: '#8B4513',
+                            universal: '#10b981',
                         }
                     },
                     fontFamily: {
@@ -45,6 +47,7 @@
                         'slide-up': 'slideUp 0.6s ease-out forwards',
                         'bounce-in': 'bounceIn 0.5s ease-out',
                         'shimmer': 'shimmer 2s linear infinite',
+                        'fade-in': 'fadeIn 0.3s ease-out',
                     },
                     keyframes: {
                         float: {
@@ -67,6 +70,10 @@
                         shimmer: {
                             '0%': { backgroundPosition: '-200% 0' },
                             '100%': { backgroundPosition: '200% 0' },
+                        },
+                        fadeIn: {
+                            '0%': { opacity: '0', transform: 'translateY(10px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
                         }
                     }
                 }
@@ -174,7 +181,7 @@
             border: 1px solid rgba(236, 72, 153, 0.3);
         }
         
-        /* MEJORA: Estilos para tarjetas de objetivo */
+        /* Estilos para tarjetas de objetivo */
         .goal-card {
             transition: all 0.3s ease;
             cursor: pointer;
@@ -193,7 +200,48 @@
             color: #ec4899;
         }
         
-        /* MEJORA: Scrollbar personalizado */
+        /* NUEVO: Estilos para tarjetas de cocina */
+        .cuisine-card {
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        .cuisine-card:hover {
+            transform: translateY(-3px);
+        }
+        .cuisine-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, transparent 0%, rgba(255,255,255,0.03) 100%);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .cuisine-card:hover::before {
+            opacity: 1;
+        }
+        .cuisine-radio:checked + .cuisine-card {
+            border-width: 2px;
+        }
+        .cuisine-radio:checked + .cuisine-card.cuisine-hidalgo {
+            border-color: #8B4513;
+            background: rgba(139, 69, 19, 0.15);
+            box-shadow: 0 0 25px rgba(139, 69, 19, 0.3);
+        }
+        .cuisine-radio:checked + .cuisine-card.cuisine-universal {
+            border-color: #10b981;
+            background: rgba(16, 185, 129, 0.15);
+            box-shadow: 0 0 25px rgba(16, 185, 129, 0.3);
+        }
+        .cuisine-radio:checked + .cuisine-card .cuisine-icon {
+            transform: scale(1.15) rotate(5deg);
+        }
+        
+        /* Scrollbar personalizado */
         .custom-scrollbar::-webkit-scrollbar {
             width: 6px;
         }
@@ -209,7 +257,7 @@
             background: rgba(236, 72, 153, 0.7);
         }
         
-        /* MEJORA: Indicador de paso activo */
+        /* Indicador de paso activo */
         .step-indicator {
             transition: all 0.3s ease;
         }
@@ -221,12 +269,7 @@
             background-color: #22c55e;
         }
         
-        /* MEJORA: Contador animado */
-        .count-badge {
-            animation: pulse 2s infinite;
-        }
-        
-        /* MEJORA: Efecto shimmer en destacados */
+        /* MEJORA: Efecto shimmer en badges */
         .shimmer-badge {
             background: linear-gradient(90deg, #ec4899, #f472b6, #ec4899);
             background-size: 200% 100%;
@@ -355,7 +398,7 @@
                     <span>Soporte por WhatsApp</span>
                 </li>
             </ul>
-            <button onclick="selectPlan('Nutrición Mensual')" class="w-full py-3 rounded-lg btn-secondary text-sm font-bold uppercase tracking-wider text-infit-pink">
+            <button onclick="selectPlan('Nutrición Mensual')" class="w-full py-3 rounded-lg btn-secondary text-sm font-bold uppercase tracking-wider text-infit-pink active:scale-95 transition-transform">
                 Elegir Nutrición
             </button>
         </div>
@@ -485,11 +528,12 @@
                     <button onclick="closeModal()" class="text-gray-500 hover:text-white transition-colors"><i class="fas fa-times text-xl"></i></button>
                 </div>
 
-                <!-- MEJORA: Indicador de progreso -->
+                <!-- Indicador de progreso -->
                 <div class="flex justify-center gap-2 mb-6">
                     <div id="step-1" class="step-indicator w-2 h-2 rounded-full bg-infit-pink active"></div>
                     <div id="step-2" class="step-indicator w-2 h-2 rounded-full bg-gray-600"></div>
                     <div id="step-3" class="step-indicator w-2 h-2 rounded-full bg-gray-600"></div>
+                    <div id="step-4" class="step-indicator w-2 h-2 rounded-full bg-gray-600"></div>
                 </div>
 
                 <div class="bg-white/5 p-3 rounded border border-white/10 mb-6 flex justify-between items-center">
@@ -526,14 +570,14 @@
                         </div>
                     </div>
 
-                    <!-- NUEVO: Campo de Objetivo con tarjetas visuales -->
+                    <!-- Campo de Objetivo -->
                     <div id="fields-goal" class="space-y-4 border-t border-gray-800 pt-4 animate-bounce-in">
                         <p class="text-white text-xs font-bold uppercase">
                             <i class="fas fa-bullseye text-infit-pink mr-1"></i>¿Cuál es tu objetivo?
                         </p>
                         <div class="grid grid-cols-1 gap-3">
                             <label class="cursor-pointer block">
-                                <input type="radio" name="goal" value="Bajar de grasa" class="goal-radio hidden" required>
+                                <input type="radio" name="goal" value="Bajar de grasa" class="goal-radio hidden">
                                 <div class="goal-card input-field p-4 rounded-lg flex items-center gap-3">
                                     <div class="goal-icon bg-red-500/20 p-3 rounded-lg text-red-400 transition-transform">
                                         <i class="fas fa-fire-flame-curved text-xl"></i>
@@ -569,6 +613,45 @@
                                 </div>
                             </label>
                         </div>
+                    </div>
+
+                    <!-- NUEVO: Campo de Preferencia de Cocina -->
+                    <div id="fields-cuisine" class="space-y-4 border-t border-gray-800 pt-4 animate-bounce-in">
+                        <p class="text-white text-xs font-bold uppercase">
+                            <i class="fas fa-utensils text-infit-pink mr-1"></i>Preferencia de Cocina
+                        </p>
+                        <div class="grid grid-cols-1 gap-3">
+                            <label class="cursor-pointer block">
+                                <input type="radio" name="cuisine" value="Sazón tradicional hidalguense" class="cuisine-radio hidden">
+                                <div class="cuisine-card cuisine-hidalgo input-field p-4 rounded-lg flex items-center gap-3 border-2 border-amber-700/30">
+                                    <div class="cuisine-icon bg-amber-700/20 p-3 rounded-lg text-amber-500 transition-transform">
+                                        <i class="fas fa-pepper-hot text-xl"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <p class="text-white font-bold text-sm">🌶️ Sazón Tradicional Hidalguense</p>
+                                        <p class="text-gray-500 text-[10px]">Ingredientes del mercado local (Santa Ana Hueytlalpan)</p>
+                                    </div>
+                                    <div class="text-[10px] text-amber-500 font-bold uppercase">Local</div>
+                                </div>
+                            </label>
+                            <label class="cursor-pointer block">
+                                <input type="radio" name="cuisine" value="Comidas mexicanas universales" class="cuisine-radio hidden">
+                                <div class="cuisine-card cuisine-universal input-field p-4 rounded-lg flex items-center gap-3 border-2 border-emerald-700/30">
+                                    <div class="cuisine-icon bg-emerald-700/20 p-3 rounded-lg text-emerald-400 transition-transform">
+                                        <i class="fas fa-store text-xl"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <p class="text-white font-bold text-sm">🛒 Comidas Mexicanas Universales</p>
+                                        <p class="text-gray-500 text-[10px]">Disponibles en cualquier súper (México general)</p>
+                                    </div>
+                                    <div class="text-[10px] text-emerald-400 font-bold uppercase">Nacional</div>
+                                </div>
+                            </label>
+                        </div>
+                        <p class="text-[10px] text-gray-600 flex items-center gap-1">
+                            <i class="fas fa-info-circle"></i>
+                            Esto nos ayuda a personalizar tus recetas con ingredientes accesibles para ti.
+                        </p>
                     </div>
 
                     <div id="fields-nutrition" class="space-y-4 border-t border-gray-800 pt-4">
@@ -715,12 +798,9 @@
                 adminElements.forEach(el => el.style.display = 'block');
             }
             loadConfig();
-            
-            // MEJORA: Configurar indicadores de paso
             setupStepIndicators();
         });
 
-        // MEJORA: Función para actualizar indicadores de progreso
         function setupStepIndicators() {
             const nameInput = document.getElementById('client-name');
             const originInput = document.getElementById('client-origin');
@@ -729,7 +809,7 @@
                 input.addEventListener('input', updateStepIndicators);
             });
             
-            // MEJORA: Actualizar paso 3 cuando se selecciona objetivo
+            // Actualizar pasos cuando se selecciona objetivo
             document.querySelectorAll('.goal-radio').forEach(radio => {
                 radio.addEventListener('change', () => {
                     const step2 = document.getElementById('step-2');
@@ -737,6 +817,17 @@
                     step2.classList.remove('active');
                     step2.classList.add('completed');
                     step3.classList.add('active');
+                });
+            });
+            
+            // Actualizar pasos cuando se selecciona cocina
+            document.querySelectorAll('.cuisine-radio').forEach(radio => {
+                radio.addEventListener('change', () => {
+                    const step3 = document.getElementById('step-3');
+                    const step4 = document.getElementById('step-4');
+                    step3.classList.remove('active');
+                    step3.classList.add('completed');
+                    step4.classList.add('active');
                 });
             });
         }
@@ -839,21 +930,21 @@
             setTimeout(() => panel.classList.remove('translate-y-full'), 10);
         }
         
-        // MEJORA: Resetear indicadores de paso
         function resetStepIndicators() {
             const step1 = document.getElementById('step-1');
             const step2 = document.getElementById('step-2');
             const step3 = document.getElementById('step-3');
+            const step4 = document.getElementById('step-4');
             
             step1.classList.remove('completed');
             step1.classList.add('active');
             step2.classList.remove('active', 'completed');
             step3.classList.remove('active', 'completed');
+            step4.classList.remove('active', 'completed');
             
-            // Limpiar selección de objetivo
-            document.querySelectorAll('.goal-radio').forEach(radio => {
-                radio.checked = false;
-            });
+            // Limpiar selecciones
+            document.querySelectorAll('.goal-radio').forEach(radio => radio.checked = false);
+            document.querySelectorAll('.cuisine-radio').forEach(radio => radio.checked = false);
         }
 
         function closeModal() {
@@ -886,11 +977,18 @@
             let unitLabelW = 'kg';
             let unitLabelH = 'cm';
             
-            // NUEVO: Capturar el objetivo seleccionado
+            // Capturar el objetivo seleccionado
             const selectedGoal = document.querySelector('input[name="goal"]:checked');
             if (selectedGoal) {
                 formData.goal = selectedGoal.value;
                 detailsText += `%0A%0A🎯 *OBJETIVO*%0A• ${formData.goal}`;
+            }
+            
+            // NUEVO: Capturar la preferencia de cocina
+            const selectedCuisine = document.querySelector('input[name="cuisine"]:checked');
+            if (selectedCuisine) {
+                formData.cuisine = selectedCuisine.value;
+                detailsText += `%0A%0A🍽️ *PREFERENCIA DE COCINA*%0A• ${formData.cuisine}`;
             }
             
             // Siempre incluir datos nutricionales
